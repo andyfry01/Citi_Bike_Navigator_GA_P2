@@ -5,6 +5,15 @@ body {
   margin: 0;
   padding: 0;
 }
+
 #map {
-  height: 90%;
+  height: 100%;
+  width: 75%;
+  float: left;
+}
+
+#turnbyturn {
+  height: 100%;
+  width: 25%;
+  float: left;
 }

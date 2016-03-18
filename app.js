@@ -1,3 +1,5 @@
+
+
 function initMap() {
   var directionsService = new google.maps.DirectionsService;
   var directionsDisplay = new google.maps.DirectionsRenderer;
@@ -9,20 +11,29 @@ function initMap() {
     }
   });
   directionsDisplay.setMap(map);
+  directionsDisplay.setPanel(document.getElementById("turnbyturn"));
 
-  function calculateAndDisplayRoute(directionsService, directionsDisplay) {
-    directionsService.route({
-      origin: "New York City, NY",
-      destination: "Salt Lake City, UT",
-      travelMode: google.maps.TravelMode.DRIVING
-    }, function(response, status) {
-      if (status === google.maps.DirectionsStatus.OK) {
-        directionsDisplay.setDirections(response);
-      } else {
-        window.alert('Directions request failed due to ' + status);
-      }
-    });
-  }
-  calculateAndDisplayRoute(directionsService, directionsDisplay);
+  var start = document.getElementById("start");
+  var end = document.getElementById("end");
+  var submit = document.getElementById("submit");
 
+  submit.addEventListener("click", function(){
+    origin = start.value;
+    destination = end.value;
+    calculateAndDisplayRoute(directionsService, directionsDisplay);
+  })
+}
+
+function calculateAndDisplayRoute(directionsService, directionsDisplay) {
+  directionsService.route({
+    origin: document.getElementById('start').value,
+    destination: document.getElementById('end').value,
+    travelMode: google.maps.TravelMode.BICYCLING,
+  }, function(response, status) {
+    if (status === google.maps.DirectionsStatus.OK) {
+      directionsDisplay.setDirections(response);
+    } else {
+      window.alert('Directions request failed due to ' + status);
+    }
+  });
 }
