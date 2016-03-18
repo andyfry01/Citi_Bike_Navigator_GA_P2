@@ -37,6 +37,16 @@ function calculateAndDisplayRoute(directionsService, directionsDisplay) {
   });
 }
 
+var originCoords = {
+  lat: "",
+  lng: ""
+}
+
+var destinationCoords = {
+  lat: "",
+  lng: ""
+}
+
 var findLatLong = function(origin, destination) {
   $.ajax({
     url: "https://maps.googleapis.com/maps/api/geocode/json?address=" + origin + "&bounds=40.667219,-74.030623|40.808685,-73.910987&key=" + apiKey,
@@ -46,8 +56,12 @@ var findLatLong = function(origin, destination) {
       console.log(data["results"][0]["geometry"]["location"]["lat"]);
       console.log("origin longitude is as follows:")
       console.log(data["results"][0]["geometry"]["location"]["lng"]);
+      originCoords["lat"] = data["results"][0]["geometry"]["location"]["lat"]
+      originCoords["lng"] = data["results"][0]["geometry"]["location"]["lng"]
+      console.log(originCoords)
     }
   })
+
   $.ajax({
     url: "https://maps.googleapis.com/maps/api/geocode/json?address=" + destination + "&bounds=40.667219,-74.030623|40.808685,-73.910987&key=" + apiKey,
     callback: JSON,
@@ -56,6 +70,24 @@ var findLatLong = function(origin, destination) {
       console.log(data["results"][0]["geometry"]["location"]["lat"]);
       console.log("destination longitude is as follows:")
       console.log(data["results"][0]["geometry"]["location"]["lng"]);
+      destinationCoords["lat"] = data["results"][0]["geometry"]["location"]["lat"]
+      destinationCoords["lng"] = data["results"][0]["geometry"]["location"]["lng"]
+      console.log(destinationCoords)
     }
   })
 }
+
+
+var findCitiBike = function() {
+  $.ajax({
+    url: "http://alloworigin.com/get?url=http://www.citibikenyc.com/stations/json",
+    // callback: "callback",
+    // dataType: 'JSONP',
+    success: function(data){
+      console.log("here's the citibike data")
+      console.log(data)
+    }
+  })
+}
+
+findCitiBike();
