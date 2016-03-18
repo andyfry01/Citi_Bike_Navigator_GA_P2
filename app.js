@@ -37,3 +37,5 @@ function calculateAndDisplayRoute(directionsService, directionsDisplay) {
     }
   });
 }
+
+//coordinate search for googlemaps with bounding box set to NYC area (so it doesn't think you're trying to look in brooklyn wisconsin or something)
