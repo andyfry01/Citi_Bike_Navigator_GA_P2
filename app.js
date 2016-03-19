@@ -102,16 +102,14 @@ var findClosestStation = function(data) {
   var haversineResult = undefined;
   var shortestDistance = 10000;
 
-  for (var i = 0; i < 1; i++) {
 
-    var citiLat = (data[i]["lat"]).toString()
+    var citiLat = (data[6]["lat"]).toString()
     addDecimel(citiLat);
-    var citiLng = (data[i]["lng"]).toString()
+    var citiLng = (data[6]["lng"]).toString()
     addDecimel(citiLng);
-    // console.log(stationLat + stationLng)
 
-    // haversine(originCoords.lat, originCoords.lng, stationLat, stationLng);
-    // // console.log("the haversine result is : " + haversineResult)
+    haversine(originCoords.lat, originCoords.lng, stationLat, stationLng);
+
     // if (haversineResult < shortestDistance) {
     //
     //   shortestDistance = haversineResult;
@@ -120,12 +118,16 @@ var findClosestStation = function(data) {
     //   closest = stationLat
     //   console.log(closest)
     // }
-  }
 };
 
 
 //Haversine Formula
 var haversine = function(lat1, lng1, lat2, lng2) {
+  console.log("origin lat " + lat1)
+  console.log("origin lng " + lng1)
+  console.log("station lat " + lat2)
+  console.log("station lng " + lng2)
+
   var R = 6371000;
   var φ1 = toRadians(lat1);
   var φ2 = toRadians(lat2);
@@ -149,11 +151,11 @@ var haversine = function(lat1, lng1, lat2, lng2) {
 var addDecimel = function(num) {
   if (num[0] == "-") {
     var numWithDecimal = [num.slice(0, 3), ".", num.slice(2)].join('');
-    stationLat = parseFloat(numWithDecimal);
-    console.log("the station lat is " + stationLat);
+    stationLng = parseFloat(numWithDecimal);
+    console.log("the station lng is " + stationLat);
   } else {
     var numWithDecimal = [num.slice(0, 2), ".", num.slice(2)].join('');
-    stationLng = parseFloat(numWithDecimal);
-    console.log("the station lng is " + stationLng);
+    stationLat = parseFloat(numWithDecimal);
+    console.log("the station lat is " + stationLng);
   }
 }
