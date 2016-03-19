@@ -75,17 +75,21 @@ var findLatLong = function(origin, destination) {
       console.log(destinationCoords)
     }
   })
-  console.log("the distance between the start/end points is: ")
-  haversine(originCoords.lat, originCoords.lng, destinationCoords.lat, destinationCoords.lng)
 }
+
 //converts lat and lng to radians
-//Haversine Formula
+toRadians = function(num) {
+    return num * Math.PI / 180;
+  }
+  //Haversine Formula
 var haversine = function(lat1, lng1, lat2, lng2) {
   var R = 6371000;
-  var φ1 = lat1.toRadians();
-  var φ2 = lat2.toRadians();
-  var Δφ = (lat2 - lat1).toRadians();
-  var Δλ = (lng2 - lng1).toRadians();
+  var φ1 = toRadians(lat1);
+  var φ2 = toRadians(lat2);
+  var deltaLat = lat2 - lat1;
+  var deltaLng = lng1 - lng2;
+  var Δφ = toRadians(deltaLat);
+  var Δλ = toRadians(deltaLng);
 
   var a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
     Math.cos(φ1) * Math.cos(φ2) *
@@ -97,23 +101,38 @@ var haversine = function(lat1, lng1, lat2, lng2) {
   return d;
 }
 
-Number.prototype.toRadians = function() {
-    return this * Math.PI / 180;
-  }
-
-
 var findCitiBike = function() {
+  haversine(originCoords.lat, originCoords.lng, destinationCoords.lat, destinationCoords.lng)
   $.ajax({
     url: "http://api.citybik.es/citi-bike-nyc.json",
     dataType: "jsonp",
     jsonpCallback: 'callback',
   }).done(function(data) {
-    console.log(data)
+
+    var closest = undefined;
+    var shortestDistance = 10000;
+    console.log(data[0]["lat"])
+    for (var i = 0; i < 2; i++) {
+
+      var citiLat = data[i]["lat"]
+      var citLatString = citiLat.toString()
+      console.log(citLatString)
+      var citiLng = data[i]["lng"]
+      var citLngString = citiLng.toString()
+      console.log(citLngString)
+    }
+    // console.log(data)
   });
 }
 
-findCitiBike();
+// findCitiBike();
 
 //convert citibike coords to correct format
 //going to need both .parseInt() and .toString()
-//var output = [num.slice(0, 2), ".", num.slice(2)].join('');
+// var output = num.slice(0, 2), ".", num.slice(2)].join('');
+
+function addDecimel(num) {
+  var numWithDecimal = [num.slice(0, 2), ".", num.slice(2)].join('');
+  var output = parseFloat(numWithDecimal);
+  return output;
+}
