@@ -79,9 +79,52 @@ var findLatLong = function(origin, destination) {
 
 //converts lat and lng to radians
 toRadians = function(num) {
-    return num * Math.PI / 180;
+  return num * Math.PI / 180;
+}
+
+var stationLat;
+var stationLng;
+
+var findCitiBike = function() {
+  $.ajax({
+    url: "http://api.citybik.es/citi-bike-nyc.json",
+    dataType: "jsonp",
+    jsonpCallback: 'callback',
+  }).done(function(data) {
+    console.log(data)
+      findClosestStation(data);
+  });
+}
+
+var findClosestStation = function(data) {
+
+  var closest = undefined;
+  var haversineResult = undefined;
+  var shortestDistance = 10000;
+
+  for (var i = 0; i < 1; i++) {
+
+    var citiLat = (data[i]["lat"]).toString()
+    addDecimel(citiLat);
+    var citiLng = (data[i]["lng"]).toString()
+    addDecimel(citiLng);
+    // console.log(stationLat + stationLng)
+
+    // haversine(originCoords.lat, originCoords.lng, stationLat, stationLng);
+    // // console.log("the haversine result is : " + haversineResult)
+    // if (haversineResult < shortestDistance) {
+    //
+    //   shortestDistance = haversineResult;
+    //   console.log(shortestDistance);
+    //
+    //   closest = stationLat
+    //   console.log(closest)
+    // }
   }
-  //Haversine Formula
+};
+
+
+//Haversine Formula
 var haversine = function(lat1, lng1, lat2, lng2) {
   var R = 6371000;
   var φ1 = toRadians(lat1);
@@ -98,41 +141,19 @@ var haversine = function(lat1, lng1, lat2, lng2) {
 
   var d = R * c;
 
-  return d;
+  haversineResult = d;
+  console.log("the haversine result is : " + haversineResult)
+
 }
 
-var findCitiBike = function() {
-  haversine(originCoords.lat, originCoords.lng, destinationCoords.lat, destinationCoords.lng)
-  $.ajax({
-    url: "http://api.citybik.es/citi-bike-nyc.json",
-    dataType: "jsonp",
-    jsonpCallback: 'callback',
-  }).done(function(data) {
-
-    var closest = undefined;
-    var shortestDistance = 10000;
-    console.log(data[0]["lat"])
-    for (var i = 0; i < 2; i++) {
-
-      var citiLat = data[i]["lat"]
-      var citLatString = citiLat.toString()
-      console.log(citLatString)
-      var citiLng = data[i]["lng"]
-      var citLngString = citiLng.toString()
-      console.log(citLngString)
-    }
-    // console.log(data)
-  });
-}
-
-// findCitiBike();
-
-//convert citibike coords to correct format
-//going to need both .parseInt() and .toString()
-// var output = num.slice(0, 2), ".", num.slice(2)].join('');
-
-function addDecimel(num) {
-  var numWithDecimal = [num.slice(0, 2), ".", num.slice(2)].join('');
-  var output = parseFloat(numWithDecimal);
-  return output;
+var addDecimel = function(num) {
+  if (num[0] == "-") {
+    var numWithDecimal = [num.slice(0, 3), ".", num.slice(2)].join('');
+    stationLat = parseFloat(numWithDecimal);
+    console.log("the station lat is " + stationLat);
+  } else {
+    var numWithDecimal = [num.slice(0, 2), ".", num.slice(2)].join('');
+    stationLng = parseFloat(numWithDecimal);
+    console.log("the station lng is " + stationLng);
+  }
 }
