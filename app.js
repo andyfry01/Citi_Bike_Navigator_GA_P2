@@ -78,16 +78,16 @@ var findLatLong = function(origin, destination) {
 }
 
 
-var findCitiBike = function() {
-  $.ajax({
-    url: "http://alloworigin.com/get?url=http://www.citibikenyc.com/stations/json",
-    // callback: "callback",
-    // dataType: 'JSONP',
-    success: function(data){
-      console.log("here's the citibike data")
-      console.log(data)
-    }
-  })
-}
-
-findCitiBike();
+// var findCitiBike = function() {
+//   $.ajax({
+//     url: "http://alloworigin.com/get?url=http://www.citibikenyc.com/stations/json",
+//     // callback: "callback",
+//     // dataType: 'JSONP',
+//     success: function(data){
+//       console.log("here's the citibike data")
+//       console.log(data)
+//     }
+//   })
+// }
+//
+// findCitiBike();
