@@ -92,45 +92,65 @@ var findCitiBike = function() {
     jsonpCallback: 'callback',
   }).done(function(data) {
     console.log(data)
-      findClosestStation(data);
+    findClosestStation(data);
   });
 }
 
+var originStationLat = undefined;
+var originStationLng = undefined;
+var destinationStationLat = undefined;
+var destinationStationLng = undefined;
+
+var haversineResult = undefined;
+var shortestDistance = 10000;
+
 var findClosestStation = function(data) {
 
-  var closest = undefined;
-  var haversineResult = undefined;
-  var shortestDistance = 10000;
-
-
-    var citiLat = (data[0]["lat"]).toString()
-    console.log("this is the stationLat before adding the decimel : " + citiLat)
+  for (var i = 0; i < data.length; i++) {
+    var citiLat = (data[i]["lat"]).toString()
     addDecimel(citiLat);
-    console.log("this is the stationLat after adding the decimel : " + stationLat)
-    var citiLng = (data[0]["lng"]).toString()
-    console.log("this is the stationLng before adding the decimel : " + citiLng)
+    var citiLng = (data[i]["lng"]).toString()
     addDecimel(citiLng);
-    console.log("this is the stationLng after adding the decimel : " + stationLng)
-
     haversine(originCoords.lat, originCoords.lng, stationLat, stationLng);
 
-    // if (haversineResult < shortestDistance) {
-    //
-    //   shortestDistance = haversineResult;
-    //   console.log(shortestDistance);
-    //
-    //   closest = stationLat
-    //   console.log(closest)
-    // }
-};
+    if (haversineResult < shortestDistance) {
+      if (data[i]["bikes"] > 2) {
+        shortestDistance = haversineResult;
+        originStationLat = stationLat;
+        originStationLng = stationLng;
+      }
+    }
+  }
+  console.log("the closest citibike dock to the origin point with available bikes is at coords: " + originStationLat + ", " + originStationLng)
 
+  haversineResult = undefined;
+  shortestDistance = 10000;
+
+  for (var i = 0; i < data.length; i++) {
+    var citiLat = (data[i]["lat"]).toString()
+    addDecimel(citiLat);
+    var citiLng = (data[i]["lng"]).toString()
+    addDecimel(citiLng);
+    haversine(destinationCoords.lat, destinationCoords.lng, stationLat, stationLng);
+
+    if (haversineResult < shortestDistance) {
+      if (data[i]["free"] >= 2) {
+        shortestDistance = haversineResult;
+        destinationStationLat = stationLat;
+        destinationStationLng = stationLng;
+      }
+    }
+  }
+  console.log("the closest citibike dock to the destination point with available bikes is at coords: " + destinationStationLat + ", " + destinationStationLng)
+
+};
 
 //Haversine Formula
 var haversine = function(lat1, lng1, lat2, lng2) {
-  console.log("origin lat " + lat1)
-  console.log("origin lng " + lng1)
-  console.log("station lat " + lat2)
-  console.log("station lng " + lng2)
+  // console.log("origin lat " + lat1)
+  // console.log("origin lng " + lng1)
+  // console.log("station lat " + lat2)
+  // console.log("station lng " + lng2)
 
   var R = 6371;
   var φ1 = toRadians(lat1);
@@ -148,18 +168,16 @@ var haversine = function(lat1, lng1, lat2, lng2) {
   var d = R * c;
 
   haversineResult = d;
-  console.log("the haversine result is : " + haversineResult)
-
+  // console.log("the haversine result is : " + haversineResult)
 }
-
 var addDecimel = function(num) {
   if (num[0] == "-") {
     var numWithDecimal = [num.slice(0, 3), ".", num.slice(3)].join('');
     stationLng = parseFloat(numWithDecimal);
-    console.log("the station lng is " + stationLat);
+    // console.log("the station lng is " + stationLat);
   } else {
     var numWithDecimal = [num.slice(0, 2), ".", num.slice(2)].join('');
     stationLat = parseFloat(numWithDecimal);
-    console.log("the station lat is " + stationLng);
+    // console.log("the station lat is " + stationLng);
   }
 }
