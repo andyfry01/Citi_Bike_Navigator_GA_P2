@@ -77,13 +77,17 @@ var findLatLong = function(origin, destination) {
   })
 }
 
-//converts lat and lng to radians
-toRadians = function(num) {
-  return num * Math.PI / 180;
-}
-
 var stationLat;
 var stationLng;
+
+var originStationLat;
+var originStationLng;
+var destinationStationLat;
+var destinationStationLng;
+
+var haversineResult = undefined;
+var shortestOriginDistance = 10000;
+var shortestDestinationDistance = 10000;
 
 var findCitiBike = function() {
   $.ajax({
@@ -96,17 +100,13 @@ var findCitiBike = function() {
   });
 }
 
-var originStationLat = undefined;
-var originStationLng = undefined;
-var destinationStationLat = undefined;
-var destinationStationLng = undefined;
-
-var haversineResult = undefined;
-var shortestDistance = 10000;
-
-
 
 var findClosestStation = function(data) {
+
+  haversineResult = undefined;
+  originStationLat = undefined;
+  originStationLng = undefined;
+  shortestOriginDistance = 10000;
 
   for (var i = 0; i < data.length; i++) {
     var citiLat = (data[i]["lat"]).toString()
@@ -115,9 +115,9 @@ var findClosestStation = function(data) {
     formatCitiCoords(citiLng);
     haversine(originCoords.lat, originCoords.lng, stationLat, stationLng);
 
-    if (haversineResult < shortestDistance) {
+    if (haversineResult < shortestOriginDistance) {
       if (data[i]["bikes"] > 2) {
-        shortestDistance = haversineResult;
+        shortestOriginDistance = haversineResult;
         originStationLat = stationLat;
         originStationLng = stationLng;
       }
@@ -127,7 +127,9 @@ var findClosestStation = function(data) {
   console.log("the closest citibike dock to the origin point with available bikes is at coords: " + originStationLat + ", " + originStationLng)
 
   haversineResult = undefined;
-  shortestDistance = 10000;
+  destinationStationLat = undefined;
+  destinationStationLng = undefined;
+  shortestDestinationDistance = 10000;
 
   for (var i = 0; i < data.length; i++) {
     var citiLat = (data[i]["lat"]).toString()
@@ -136,9 +138,9 @@ var findClosestStation = function(data) {
     formatCitiCoords(citiLng);
     haversine(destinationCoords.lat, destinationCoords.lng, stationLat, stationLng);
 
-    if (haversineResult < shortestDistance) {
+    if (haversineResult < shortestDestinationDistance) {
       if (data[i]["free"] >= 2) {
-        shortestDistance = haversineResult;
+        shortestDestinationDistance = haversineResult;
         destinationStationLat = stationLat;
         destinationStationLng = stationLng;
       }
@@ -147,6 +149,12 @@ var findClosestStation = function(data) {
   console.log("the closest citibike dock to the destination point with available bikes is at coords: " + destinationStationLat + ", " + destinationStationLng)
 
 };
+
+
+//converts lat and lng to radians
+toRadians = function(num) {
+  return num * Math.PI / 180;
+}
 
 //Haversine Formula, determines distance between two sets of lat/lng points
 var haversine = function(lat1, lng1, lat2, lng2) {
@@ -166,8 +174,8 @@ var haversine = function(lat1, lng1, lat2, lng2) {
 }
 
 //formats citibike coordinate data so it can be passed into haversine formula
-var formatCitiCoords = function(num) {
-  if (num[0] == "-") {
+var formatCitiCoords = function(coord) {
+  if (coord[0] == "-") {
     var formattedCoord = [coord.slice(0, 3), ".", coord.slice(3)].join('');
     stationLng = parseFloat(formattedCoord);
   } else {
