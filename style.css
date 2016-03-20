@@ -1,19 +1,25 @@
-/*DON'T PUT YOUR API KEY ON GITHUB!!!*/
-html,
-body {
+html, body, #map-canvas {
   height: 100%;
-  margin: 0;
-  padding: 0;
+  margin: 0px;
+  padding: 0px
 }
+#panel li:before{
 
-#map {
-  height: 100%;
-  width: 75%;
-  float: left;
+  padding: 3px;
+  display:block;
+  color:#fff;
+  font-weight:bold;
 }
-
-#turnbyturn {
-  height: 100%;
-  width: 25%;
-  float: left;
+#panel li:nth-child(1):before{
+  content:'startLeg:DRIVING';
+  background:red;
+}
+#panel li:nth-child(2):before{
+  content:'middleLeg:TRANSIT';
+  background:blue;
+}
+#panel li:nth-child(3):before{
+  content:'endLeg:BICYCLING';
+  background:yellow;
+  color:#000;
 }

@@ -1,27 +1,22 @@
 <!DOCTYPE html>
 <html>
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+    <link rel="stylesheet" href="style.css" media="screen" title="no title" charset="utf-8">
+  </head>
+  <body>
+    <input type="input" id="start" value="Brooklyn, NY">
+<input type="input" id="end" value="Manhattan, NY">
+<button type="button" id="submit">Click me to generate your map!</button>
 
-<head>
-  <title>Citibike App</title>
-  <meta name="viewport" content="initial-scale=1.0">
-  <meta charset="utf-8">
-  <link rel="stylesheet" href="style.css" media="screen" title="no title" charset="utf-8">
-</head>
 
-<body>
-  <input type="input" id="start" value="376 2nd Street, Brooklyn, NY 11215">
-  <input type="input" id="end" value="10 E 21st St, Manhattan, NY">
-  <button type="button" id="submit">Click me to generate your map!</button>
+    <div id="map-canvas"></div>
+    <ol id="panel"></ol>
 
-  <div id="turnbyturn"></div>
-
-  <div id="map"></div>
-
-  <script src="apiKey.js"></script>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
-  <script src="app.js"></script>
-
-</script>
-</body>
-
+    <script src="apiKey.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+    <script src="app.js"></script>
+    <script async defer src="http://maps.google.com/maps/api/js?sensor=false&callback=initMap"></script>
+  </body>
 </html>

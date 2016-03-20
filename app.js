@@ -1,51 +1,17 @@
-var initMap = function() {
-  var directionsService = new google.maps.DirectionsService;
-  var directionsDisplay = new google.maps.DirectionsRenderer;
-  var map = new google.maps.Map(document.getElementById('map'), {
-    zoom: 13,
-    center: {
-      lat: 40.72,
-      lng: -73.97,
-    }
-  });
-  directionsDisplay.setMap(map);
-  directionsDisplay.setPanel(document.getElementById("turnbyturn"));
+var start = document.getElementById("start");
+var end = document.getElementById("end");
+var submit = document.getElementById("submit");
 
-  var start = document.getElementById("start");
-  var end = document.getElementById("end");
-  var submit = document.getElementById("submit");
+submit.addEventListener("click", function() {
+  origin = start.value;
+  destination = end.value;
+  findLatLong(origin, destination);
+})
 
-  submit.addEventListener("click", function() {
-    origin = start.value;
-    destination = end.value;
-    calculateAndDisplayRoute(directionsService, directionsDisplay);
-    findLatLong(origin, destination);
-  })
-}
+$(document).ajaxStop(function() {
+  initMap();
+})
 
-function calculateAndDisplayRoute(directionsService, directionsDisplay) {
-  directionsService.route({
-    origin: document.getElementById('start').value,
-    destination: document.getElementById('end').value,
-    travelMode: google.maps.TravelMode.BICYCLING,
-  }, function(response, status) {
-    if (status === google.maps.DirectionsStatus.OK) {
-      directionsDisplay.setDirections(response);
-    } else {
-      window.alert('Directions request failed due to ' + status);
-    }
-  });
-}
-
-var originCoords = {
-  lat: "",
-  lng: ""
-}
-
-var destinationCoords = {
-  lat: "",
-  lng: ""
-}
 
 var findLatLong = function(origin, destination) {
   $.ajax({
@@ -79,14 +45,26 @@ var findLatLong = function(origin, destination) {
   })
 }
 
+var originCoords = {
+  lat: "",
+  lng: ""
+}
+
+var destinationCoords = {
+  lat: "",
+  lng: ""
+}
 
 var stationLat;
 var stationLng;
 
 var originStationLat;
 var originStationLng;
+var fullOriginCoords;
+
 var destinationStationLat;
 var destinationStationLng;
+var fullDestinationCoords = destinationStationLat + ", " + destinationStationLng;
 
 var haversineResult = undefined;
 var shortestOriginDistance = 10000;
@@ -129,6 +107,7 @@ var findClosestStation = function(data) {
 
   }
   console.log("the closest citibike dock to the origin point with available bikes is at coords: " + originStationLat + ", " + originStationLng)
+  fullOriginCoords = originStationLat + ", " + originStationLng;
 
   haversineResult = undefined;
   destinationStationLat = undefined;
@@ -151,6 +130,7 @@ var findClosestStation = function(data) {
     }
   }
   console.log("the closest citibike dock to the destination point with available bikes is at coords: " + destinationStationLat + ", " + destinationStationLng)
+  fullDestinationCoords = destinationStationLat + ", " + destinationStationLng
 };
 
 
@@ -185,4 +165,68 @@ var formatCitiCoords = function(coord) {
     var formattedCoord = [coord.slice(0, 2), ".", coord.slice(2)].join('');
     stationLat = parseFloat(formattedCoord);
   }
+}
+
+function initMap() {
+    var gmaps       = google.maps,
+        map         = new gmaps.Map(document.getElementById('map-canvas'),
+                                  {
+                                    center  : new gmaps.LatLng(40.72, -73.97),
+                                    zoom    : 10
+                                  }
+                                 ),
+        App         = { map               : map,
+                        bounds            : new gmaps.LatLngBounds(),
+                        directionsService : new gmaps.DirectionsService(),
+                        directionsDisplay1: new gmaps.DirectionsRenderer({
+                                              map             : map,
+                                              preserveViewport: true,
+                                              suppressMarkers : true,
+                                              polylineOptions : {strokeColor:'red'},
+                                              panel           : document.getElementById('panel').appendChild(document.createElement('li'))}),
+                        directionsDisplay2: new gmaps.DirectionsRenderer({
+                                              map             : map,
+                                              preserveViewport: true,
+                                              suppressMarkers : true,
+                                              polylineOptions : {strokeColor:'blue'},
+                                              panel           : document.getElementById('panel').appendChild(document.createElement('li'))}),
+                        directionsDisplay3: new gmaps.DirectionsRenderer({
+                                              map             : map,
+                                              preserveViewport: true,
+                                              suppressMarkers : true,
+                                              polylineOptions : {strokeColor:'yellow'},
+                                              panel           : document.getElementById('panel').appendChild(document.createElement('li'))
+                                              })
+
+            },
+         startLeg   = {  origin     :  origin,
+                        destination :  fullOriginCoords,
+                        travelMode  :  gmaps.TravelMode.WALKING},
+         middleLeg  = {  origin     :  fullOriginCoords,
+                        destination :  fullDestinationCoords,
+                        travelMode  :  gmaps.TravelMode.BICYCLING},
+         endLeg     = { origin      :  fullDestinationCoords,
+                        destination :  destination,
+                        travelMode  :  gmaps.TravelMode.WALKING};
+
+      App.directionsService.route(startLeg, function(result, status) {
+        if (status == google.maps.DirectionsStatus.OK) {
+          App.directionsDisplay1.setDirections(result);
+          App.map.fitBounds(App.bounds.union(result.routes[0].bounds));
+        }
+      });
+
+      App.directionsService.route(middleLeg, function(result, status) {
+        if (status == google.maps.DirectionsStatus.OK) {
+          App.directionsDisplay2.setDirections(result);
+          App.map.fitBounds(App.bounds.union(result.routes[0].bounds));
+        }
+      });
+
+      App.directionsService.route(endLeg, function(result, status) {
+        if (status == google.maps.DirectionsStatus.OK) {
+          App.directionsDisplay3.setDirections(result);
+          App.map.fitBounds(App.bounds.union(result.routes[0].bounds));
+        }
+      });
 }

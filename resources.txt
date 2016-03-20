@@ -1,4 +1,5 @@
-Adding decimels to lat.lng: http://stackoverflow.com/questions/4364881/inserting-string-at-position-x-of-another-string
-Putting Google API key in script tag: http://stackoverflow.com/questions/11457918/how-to-set-a-variable-inside-script-tag
-Haversine formula for calculating distances between lat/lng points: http://www.movable-type.co.uk/scripts/latlong.html
-Converting latitude and longitude to radians: http://stackoverflow.com/questions/5260423/torad-javascript-function-throwing-error
+- Adding decimels to lat.lng: http://stackoverflow.com/questions/4364881/inserting-string-at-position-x-of-another-string
+- Putting Google API key in script tag: http://stackoverflow.com/questions/11457918/how-to-set-a-variable-inside-script-tag
+- Haversine formula for calculating distances between lat/lng points: http://www.movable-type.co.uk/scripts/latlong.html
+- Converting latitude and longitude to radians: http://stackoverflow.com/questions/5260423/torad-javascript-function-throwing-error
+- Rendering multiple travel modes on one map: http://stackoverflow.com/questions/22922856/multiple-travel-modes-to-render-one-map-using-google-maps-api
