@@ -104,13 +104,15 @@ var destinationStationLng = undefined;
 var haversineResult = undefined;
 var shortestDistance = 10000;
 
+
+
 var findClosestStation = function(data) {
 
   for (var i = 0; i < data.length; i++) {
     var citiLat = (data[i]["lat"]).toString()
-    addDecimel(citiLat);
+    formatCitiCoords(citiLat);
     var citiLng = (data[i]["lng"]).toString()
-    addDecimel(citiLng);
+    formatCitiCoords(citiLng);
     haversine(originCoords.lat, originCoords.lng, stationLat, stationLng);
 
     if (haversineResult < shortestDistance) {
@@ -120,6 +122,7 @@ var findClosestStation = function(data) {
         originStationLng = stationLng;
       }
     }
+
   }
   console.log("the closest citibike dock to the origin point with available bikes is at coords: " + originStationLat + ", " + originStationLng)
 
@@ -128,9 +131,9 @@ var findClosestStation = function(data) {
 
   for (var i = 0; i < data.length; i++) {
     var citiLat = (data[i]["lat"]).toString()
-    addDecimel(citiLat);
+    formatCitiCoords(citiLat);
     var citiLng = (data[i]["lng"]).toString()
-    addDecimel(citiLng);
+    formatCitiCoords(citiLng);
     haversine(destinationCoords.lat, destinationCoords.lng, stationLat, stationLng);
 
     if (haversineResult < shortestDistance) {
@@ -145,13 +148,8 @@ var findClosestStation = function(data) {
 
 };
 
-//Haversine Formula
+//Haversine Formula, determines distance between two sets of lat/lng points
 var haversine = function(lat1, lng1, lat2, lng2) {
-  // console.log("origin lat " + lat1)
-  // console.log("origin lng " + lng1)
-  // console.log("station lat " + lat2)
-  // console.log("station lng " + lng2)
-
   var R = 6371;
   var φ1 = toRadians(lat1);
   var φ2 = toRadians(lat2);
@@ -159,25 +157,21 @@ var haversine = function(lat1, lng1, lat2, lng2) {
   var deltaLng = lng1 - lng2;
   var Δφ = toRadians(deltaLat);
   var Δλ = toRadians(deltaLng);
-
   var a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
     Math.cos(φ1) * Math.cos(φ2) *
     Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
   var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-
   var d = R * c;
-
   haversineResult = d;
-  // console.log("the haversine result is : " + haversineResult)
 }
-var addDecimel = function(num) {
+
+//formats citibike coordinate data so it can be passed into haversine formula
+var formatCitiCoords = function(num) {
   if (num[0] == "-") {
-    var numWithDecimal = [num.slice(0, 3), ".", num.slice(3)].join('');
-    stationLng = parseFloat(numWithDecimal);
-    // console.log("the station lng is " + stationLat);
+    var formattedCoord = [coord.slice(0, 3), ".", coord.slice(3)].join('');
+    stationLng = parseFloat(formattedCoord);
   } else {
-    var numWithDecimal = [num.slice(0, 2), ".", num.slice(2)].join('');
-    stationLat = parseFloat(numWithDecimal);
-    // console.log("the station lat is " + stationLng);
+    var formattedCoord = [coord.slice(0, 2), ".", coord.slice(2)].join('');
+    stationLat = parseFloat(formattedCoord);
   }
 }
