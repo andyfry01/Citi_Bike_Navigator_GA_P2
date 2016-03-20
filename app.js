@@ -74,8 +74,11 @@ var findLatLong = function(origin, destination) {
       destinationCoords["lng"] = data["results"][0]["geometry"]["location"]["lng"];
       console.log(destinationCoords)
     }
+  }).done(function(){
+    findCitiBike();
   })
 }
+
 
 var stationLat;
 var stationLng;
@@ -88,6 +91,7 @@ var destinationStationLng;
 var haversineResult = undefined;
 var shortestOriginDistance = 10000;
 var shortestDestinationDistance = 10000;
+
 
 var findCitiBike = function() {
   $.ajax({
@@ -147,7 +151,6 @@ var findClosestStation = function(data) {
     }
   }
   console.log("the closest citibike dock to the destination point with available bikes is at coords: " + destinationStationLat + ", " + destinationStationLng)
-
 };
 
 
