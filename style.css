@@ -1,31 +1,31 @@
 * {
   box-sizing: border-box;
 }
-
+span{
+  background-color: white;
+}
 html, body {
   height: 100%;
+  background-color: #052b6c;
 }
 #map-canvas {
   height: 90%;
   margin: 5px;
   border: 1px solid black;
-  border-radius: 5px;
   margin: 1px;
 }
 input {
   height: 30px;
   width: 30%;
   border: 1px solid black;
-  border-radius: 5px;
   margin: 1px;
 }
 button {
   height: 30px;
   width: 100px;
   border: 1px solid black;
-  border-radius: 5px;
   margin: 1px;
-  background: lightblue;
+  background-color: #0098e4;
 }
 #panel li:before {
   padding: 3px;
@@ -62,12 +62,11 @@ button {
   margin: 0 auto;
   overflow: scroll;
   border: 1px solid black;
-  border-radius: 5px;
+  background: white;
 }
 .handlebars-container{
   height: 15%;
   width: 90%;
   margin: 0 auto;
   border: 1px solid black;
-  border-radius: 5px;
 }

@@ -13,16 +13,23 @@
 
     <div id="handlebars-container">
     </div>
-
+    <span> Directions from your origin to the nearest Citibike pick-up station:</span>
     <div class="turnbyturn" id="one"></div>
+    <span> Directions to your Citibike drop-off station:</span>
     <div class="turnbyturn" id="two"></div>
+    <span> Directions to your destination from your Citibike drop-off station:</span>
     <div class="turnbyturn" id="three"></div>
   </div>
 
   <div class="map-col">
-    <input type="input" id="start" value="Brooklyn, NY">
-    <input type="input" id="end" value="Manhattan, NY">
-    <button type="button" id="submit">Click me to search!</button>
+    <div id="controls">
+      <input type="input" id="start" placeholder="Enter a start address">
+      <input type="input" id="end" placeholder="Enter a destination address">
+      <button type="button" id="submit">Click me to search!</button>
+      <br>
+      <span>For best results, limit your search to the street address only (including placenames may deliver erroneous results)</span>
+    </div>
+
     <div id="map-canvas"></div>
   </div>
 

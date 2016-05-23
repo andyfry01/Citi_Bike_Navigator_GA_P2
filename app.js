@@ -51,10 +51,10 @@ var findLatLong = function(origin, destination) {
     url: "https://maps.googleapis.com/maps/api/geocode/json?address=" + origin + "&bounds=40.667219,-74.030623|40.808685,-73.910987&key=" + apiKey,
     dataType: "json",
     success: function(data) {
-      console.log("origin latitude is as follows:");
-      console.log(data["results"][0]["geometry"]["location"]["lat"]);
-      console.log("origin longitude is as follows:");
-      console.log(data["results"][0]["geometry"]["location"]["lng"]);
+      console.log("origin data is as follows:");
+      console.log(data);
+      console.log("origin data is as follows:");
+      console.log(data);
       originCoords["lat"] = data["results"][0]["geometry"]["location"]["lat"];
       originCoords["lng"] = data["results"][0]["geometry"]["location"]["lng"];
       console.log(originCoords)
@@ -65,10 +65,10 @@ var findLatLong = function(origin, destination) {
     url: "https://maps.googleapis.com/maps/api/geocode/json?address=" + destination + "&bounds=40.667219,-74.030623|40.808685,-73.910987&key=" + apiKey,
     callback: JSON,
     success: function(data) {
-      console.log("destination latitude is as follows:");
-      console.log(data["results"][0]["geometry"]["location"]["lat"]);
-      console.log("destination longitude is as follows:");
-      console.log(data["results"][0]["geometry"]["location"]["lng"]);
+      console.log("destination data is as follows:");
+      console.log(data["results"]);
+      console.log("destination data is as follows:");
+      console.log(data["results"]);
       destinationCoords["lat"] = data["results"][0]["geometry"]["location"]["lat"];
       destinationCoords["lng"] = data["results"][0]["geometry"]["location"]["lng"];
       console.log(destinationCoords)
@@ -182,12 +182,25 @@ var haversine = function(lat1, lng1, lat2, lng2) {
 
 //Draws map on page after origin/destination information is filled in and stations have been located.
 function initMap() {
-  var gmaps = google.maps,
-    map = new gmaps.Map(document.getElementById('map-canvas'), {
+  var gmaps = google.maps
+  var map = new gmaps.Map(document.getElementById('map-canvas'), {
       center: new gmaps.LatLng(40.72, -73.97),
       zoom: 13
-    }),
-    App = {
+    })
+
+    // Create the search box and link it to the UI element.
+    var startSearchBox = new google.maps.places.SearchBox(start);
+    console.log("start search box looks like this: ", start);
+
+    var endSearchBox = new google.maps.places.SearchBox(end);
+    console.log("end search box looks like this: ", end);
+
+    // Bias the SearchBox results towards current map's viewport.
+    map.addListener('bounds_changed', function() {
+      startSearchBox.setBounds(map.getBounds());
+    });
+
+    var App = {
       map: map,
       bounds: new gmaps.LatLngBounds(),
       directionsService: new gmaps.DirectionsService(),
