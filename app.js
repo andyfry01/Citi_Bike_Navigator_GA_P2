@@ -27,23 +27,17 @@ var destinationCoords = {
 }
 
 //Coordinates for the origin and destination citibike stations
-var originStationCoords = {
+var originStation = {
   lat: undefined,
-  lng: undefined
-  // fullOriginCoords: this.lat + ", " + this.lng,
-  // logThis: function(){ console.log(this); }
+  lng: undefined,
+  fullCoords: undefined
 }
-// var originStationLat;
-// var originStationLng;
-// var fullOriginCoords;
 
-var destinationStationCoords = {
+var destinationStation = {
   lat: undefined,
-  lng: undefined
+  lng: undefined,
+  fullCoords: undefined
 }
-// var destinationStationLat;
-// var destinationStationLng;
-// var fullDestinationCoords;
 
 var haversineResult = undefined;
 var shortestDistance = 10000;
@@ -63,13 +57,8 @@ var findLatLong = function(origin, destination) {
     url: "https://maps.googleapis.com/maps/api/geocode/json?address=" + origin + "&bounds=40.667219,-74.030623|40.808685,-73.910987&key=" + apiKey,
     dataType: "json",
     success: function(data) {
-      console.log("origin data is as follows:");
-      console.log(data);
-      console.log("origin data is as follows:");
-      console.log(data);
       originCoords.lat = data["results"][0]["geometry"]["location"]["lat"];
       originCoords.lng = data["results"][0]["geometry"]["location"]["lng"];
-      console.log(originCoords)
     }
   })
 
@@ -77,13 +66,8 @@ var findLatLong = function(origin, destination) {
     url: "https://maps.googleapis.com/maps/api/geocode/json?address=" + destination + "&bounds=40.667219,-74.030623|40.808685,-73.910987&key=" + apiKey,
     callback: JSON,
     success: function(data) {
-      console.log("destination data is as follows:");
-      console.log(data["results"]);
-      console.log("destination data is as follows:");
-      console.log(data["results"]);
       destinationCoords.lat = data["results"][0]["geometry"]["location"]["lat"];
       destinationCoords.lng = data["results"][0]["geometry"]["location"]["lng"];
-      console.log(destinationCoords)
     }
   }).done(function() {
     findCitiBike();
@@ -106,8 +90,8 @@ var findCitiBike = function() {
 var findClosestStation = function(data) {
 
   haversineResult = undefined;
-  originStationCoords.lat = undefined;
-  originStationCoords.lng = undefined;
+  originStation.lat = undefined;
+  originStation.lng = undefined;
 
   // originStationLat = undefined;
   // originStationLng = undefined;
@@ -124,19 +108,18 @@ var findClosestStation = function(data) {
     if (haversineResult < shortestOriginDistance) {
       if (data[i]["bikes"] > 2) {
         shortestOriginDistance = haversineResult;
-        originStationCoords.lat = stationLat;
-        originStationCoords.lng = stationLng;
+        originStation.lat = stationLat;
+        originStation.lng = stationLng;
         stationData.originName = data[i]["name"]
         stationData.numBikes = data[i]["bikes"]
       }
     }
   }
   // console.log("the closest citibike dock to the origin point with available bikes is at coords: " + originStationLat + ", " + originStationLng)
-  fullOriginCoords = originStationCoords.lat + ", " + originStationCoords.lng;
-  console.log("full origin coords looks like this:", fullOriginCoords);
+  originStation.fullCoords = originStation.lat + ", " + originStation.lng;
   haversineResult = undefined;
-  destinationStationCoords.lat = undefined;
-  destinationStationCoords.lng = undefined;
+  destinationStation.lat = undefined;
+  destinationStation.lng = undefined;
   shortestDestinationDistance = 10000;
 
   //second for loop, finds "destination station"
@@ -145,21 +128,21 @@ var findClosestStation = function(data) {
     formatCitiCoords(citiLat);
     var citiLng = (data[i]["lng"]).toString()
     formatCitiCoords(citiLng);
-    haversine(destinationStationCoords.lat, destinationStationCoords.lng, stationLat, stationLng);
+    haversine(destinationCoords.lat, destinationCoords.lng, stationLat, stationLng);
 
     if (haversineResult < shortestDestinationDistance) {
       if (data[i]["free"] >= 2) {
         shortestDestinationDistance = haversineResult;
-        destinationStationLat = stationLat;
-        destinationStationLng = stationLng;
+        destinationStation.lat = stationLat;
+        destinationStation.lng = stationLng;
         stationData.destinationName = data[i]["name"]
         stationData.numSlots = data[i]["free"]
       }
     }
   }
   fillHandlebars(stationData)
-  console.log("the closest citibike dock to the destination point with available bikes is at coords: " + destinationStationLat + ", " + destinationStationLng)
-  fullDestinationCoords = destinationStationLat + ", " + destinationStationLng
+  // console.log("the closest citibike dock to the destination point with available bikes is at coords: " + destinationStationLat + ", " + destinationStationLng)
+  destinationStation.fullCoords = destinationStation.lat + ", " + destinationStation.lng
 };
 
 //Formats citibike coordinate data so it can be passed into haversine formula
@@ -263,16 +246,16 @@ function initMap() {
     },
     startLeg = {
       origin: origin,
-      destination: fullOriginCoords,
+      destination: originStation.fullCoords,
       travelMode: gmaps.TravelMode.WALKING
     },
     middleLeg = {
-      origin: fullOriginCoords,
-      destination: fullDestinationCoords,
+      origin: originStation.fullCoords,
+      destination: destinationStation.fullCoords,
       travelMode: gmaps.TravelMode.BICYCLING
     },
     endLeg = {
-      origin: fullDestinationCoords,
+      origin: destinationStation.fullCoords,
       destination: destination,
       travelMode: gmaps.TravelMode.WALKING
     };
