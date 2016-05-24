@@ -88,51 +88,44 @@ var findCitiBike = function() {
 //Loops through Citibike data, finds closest stations to origin and destination addresses
 var findClosestStation = function(data) {
 
-  haversineResult = undefined;
+  //Variables for storing distance between stations and origin/destination addresses
+  originHaversineResult = undefined;
+  destinationHaversineResult = undefined;
+
   originStation.lat = undefined;
   originStation.lng = undefined;
-
-  // originStationLat = undefined;
-  // originStationLng = undefined;
   shortestOriginDistance = 10000;
 
-  //first for loop, finds "origin station"
+  destinationStation.lat = undefined;
+  destinationStation.lng = undefined;
+  shortestDestinationDistance = 10000;
 
   for (var i = 0; i < data.length; i++) {
+    //loops through Citibike station data and formats coordinates for Haversine formula
     var citiLat = (data[i]["lat"]).toString()
-    formatCitiCoords(citiLat);
     var citiLng = (data[i]["lng"]).toString()
+    formatCitiCoords(citiLat);
     formatCitiCoords(citiLng);
-    haversine(originCoords.lat, originCoords.lng, stationLat, stationLng);
 
-    if (haversineResult < shortestOriginDistance) {
+    //Haversine formula compares station coordinates to origin and destination coordinates
+    haversine(originCoords.lat, originCoords.lng, stationLat, stationLng, "origin");
+    haversine(destinationCoords.lat, destinationCoords.lng, stationLat, stationLng, "destination")
+
+    // Finds closest origin station with at least two bikes
+    if (originHaversineResult < shortestOriginDistance) {
       if (data[i]["bikes"] > 2) {
-        shortestOriginDistance = haversineResult;
+        shortestOriginDistance = originHaversineResult;
         originStation.lat = stationLat;
         originStation.lng = stationLng;
         stationData.originName = data[i]["name"]
         stationData.numBikes = data[i]["bikes"]
       }
     }
-  }
 
-  originStation.fullCoords = originStation.lat + ", " + originStation.lng;
-  haversineResult = undefined;
-  destinationStation.lat = undefined;
-  destinationStation.lng = undefined;
-  shortestDestinationDistance = 10000;
-
-  //second for loop, finds "destination station"
-  for (var i = 0; i < data.length; i++) {
-    var citiLat = (data[i]["lat"]).toString()
-    formatCitiCoords(citiLat);
-    var citiLng = (data[i]["lng"]).toString()
-    formatCitiCoords(citiLng);
-    haversine(destinationCoords.lat, destinationCoords.lng, stationLat, stationLng);
-
-    if (haversineResult < shortestDestinationDistance) {
-      if (data[i]["free"] >= 2) {
-        shortestDestinationDistance = haversineResult;
+    // Finds closest destination station with at least five docking slots availble
+    if (destinationHaversineResult < shortestDestinationDistance) {
+      if (data[i]["free"] >= 5) {
+        shortestDestinationDistance = destinationHaversineResult;
         destinationStation.lat = stationLat;
         destinationStation.lng = stationLng;
         stationData.destinationName = data[i]["name"]
@@ -140,8 +133,14 @@ var findClosestStation = function(data) {
       }
     }
   }
+
   fillHandlebars(stationData)
-  destinationStation.fullCoords = destinationStation.lat + ", " + destinationStation.lng
+  originStation.fullCoords = originStation.lat + ", " + originStation.lng;
+  destinationStation.fullCoords = destinationStation.lat + ", " + destinationStation.lng;
+
+  // Resets Haversine variables for subsequent directions searches
+  originHaversineResult = undefined;
+  destinationHaversineResult = undefined;
 };
 
 //Formats citibike coordinate data so it can be passed into haversine formula
@@ -189,7 +188,7 @@ function initMap() {
       zoom: 13
     })
 
-    // Search box
+    // Search box/autocomplete functinality
     var startSearchBox = new google.maps.places.SearchBox(start);
     var endSearchBox = new google.maps.places.SearchBox(end);
 
