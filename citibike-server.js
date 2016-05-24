@@ -1,6 +1,7 @@
 var express = require('express');
-var PORT = 31416;
 var app = express();
+
+var PORT = 31416;
 
 app.use(express.static('./public'))
 
