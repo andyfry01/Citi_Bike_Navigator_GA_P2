@@ -16,18 +16,6 @@ var stationData = {
 var stationLat;
 var stationLng;
 
-var originStationLat;
-var originStationLng;
-var fullOriginCoords;
-
-var destinationStationLat;
-var destinationStationLng;
-var fullDestinationCoords;
-
-var haversineResult = undefined;
-var shortestOriginDistance = 10000;
-var shortestDestinationDistance = 10000;
-
 //Coordinates from origin and destination addresses, used in Haversine formula
 var originCoords = {
   lat: "",
@@ -38,6 +26,30 @@ var destinationCoords = {
   lng: ""
 }
 
+//Coordinates for the origin and destination citibike stations
+var originStationCoords = {
+  lat: undefined,
+  lng: undefined
+  // fullOriginCoords: this.lat + ", " + this.lng,
+  // logThis: function(){ console.log(this); }
+}
+// var originStationLat;
+// var originStationLng;
+// var fullOriginCoords;
+
+var destinationStationCoords = {
+  lat: undefined,
+  lng: undefined
+}
+// var destinationStationLat;
+// var destinationStationLng;
+// var fullDestinationCoords;
+
+var haversineResult = undefined;
+var shortestDistance = 10000;
+//refactor later with ln 37
+var shortestOriginDistance = 10000;
+var shortestDestinationDistance = 10000;
 
 submit.addEventListener("click", function() {
   origin = start.value;
@@ -55,8 +67,8 @@ var findLatLong = function(origin, destination) {
       console.log(data);
       console.log("origin data is as follows:");
       console.log(data);
-      originCoords["lat"] = data["results"][0]["geometry"]["location"]["lat"];
-      originCoords["lng"] = data["results"][0]["geometry"]["location"]["lng"];
+      originCoords.lat = data["results"][0]["geometry"]["location"]["lat"];
+      originCoords.lng = data["results"][0]["geometry"]["location"]["lng"];
       console.log(originCoords)
     }
   })
@@ -69,8 +81,8 @@ var findLatLong = function(origin, destination) {
       console.log(data["results"]);
       console.log("destination data is as follows:");
       console.log(data["results"]);
-      destinationCoords["lat"] = data["results"][0]["geometry"]["location"]["lat"];
-      destinationCoords["lng"] = data["results"][0]["geometry"]["location"]["lng"];
+      destinationCoords.lat = data["results"][0]["geometry"]["location"]["lat"];
+      destinationCoords.lng = data["results"][0]["geometry"]["location"]["lng"];
       console.log(destinationCoords)
     }
   }).done(function() {
@@ -94,8 +106,11 @@ var findCitiBike = function() {
 var findClosestStation = function(data) {
 
   haversineResult = undefined;
-  originStationLat = undefined;
-  originStationLng = undefined;
+  originStationCoords.lat = undefined;
+  originStationCoords.lng = undefined;
+
+  // originStationLat = undefined;
+  // originStationLng = undefined;
   shortestOriginDistance = 10000;
 
   //first for loop, finds "origin station"
@@ -109,19 +124,19 @@ var findClosestStation = function(data) {
     if (haversineResult < shortestOriginDistance) {
       if (data[i]["bikes"] > 2) {
         shortestOriginDistance = haversineResult;
-        originStationLat = stationLat;
-        originStationLng = stationLng;
+        originStationCoords.lat = stationLat;
+        originStationCoords.lng = stationLng;
         stationData.originName = data[i]["name"]
         stationData.numBikes = data[i]["bikes"]
       }
     }
   }
-  console.log("the closest citibike dock to the origin point with available bikes is at coords: " + originStationLat + ", " + originStationLng)
-  fullOriginCoords = originStationLat + ", " + originStationLng;
-
+  // console.log("the closest citibike dock to the origin point with available bikes is at coords: " + originStationLat + ", " + originStationLng)
+  fullOriginCoords = originStationCoords.lat + ", " + originStationCoords.lng;
+  console.log("full origin coords looks like this:", fullOriginCoords);
   haversineResult = undefined;
-  destinationStationLat = undefined;
-  destinationStationLng = undefined;
+  destinationStationCoords.lat = undefined;
+  destinationStationCoords.lng = undefined;
   shortestDestinationDistance = 10000;
 
   //second for loop, finds "destination station"
@@ -130,7 +145,7 @@ var findClosestStation = function(data) {
     formatCitiCoords(citiLat);
     var citiLng = (data[i]["lng"]).toString()
     formatCitiCoords(citiLng);
-    haversine(destinationCoords.lat, destinationCoords.lng, stationLat, stationLng);
+    haversine(destinationStationCoords.lat, destinationStationCoords.lng, stationLat, stationLng);
 
     if (haversineResult < shortestDestinationDistance) {
       if (data[i]["free"] >= 2) {
@@ -179,15 +194,35 @@ var haversine = function(lat1, lng1, lat2, lng2) {
   var d = R * c;
   haversineResult = d;
 }
+var walking = 'https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png'
 
-//Draws map on page after origin/destination information is filled in and stations have been located.
+var bicycle = "./img/bicycle.png"//Draws map on page after origin/destination information is filled in and stations have been located.
 function initMap() {
   var gmaps = google.maps
   var map = new gmaps.Map(document.getElementById('map-canvas'), {
       center: new gmaps.LatLng(40.72, -73.97),
       zoom: 13
     })
-
+  // var walkingMarkerOne = new google.maps.Marker({
+  //   position: {origin},
+  //   map: map,
+  //   icon: './img/walking.png'
+  // });
+  // var walkingMarkerTwo = new google.maps.Marker({
+  //   position: {destination},
+  //   map: map,
+  //   icon: './img/walking.png'
+  // });
+  // var bicycleMarkerOne = new google.maps.Marker({
+  //   position: {lat: destinationStationLat, lng: destinationStationLng},
+  //   map: map,
+  //   icon: './img/bicycle.png'
+  // });
+  // var bicycleMarkerTwo = new google.maps.Marker({
+  //   position: {lat: 40.82, lng: -74.07},
+  //   map: map,
+  //   icon: './img/bicycle.png'
+  // });
     // Create the search box and link it to the UI element.
     var startSearchBox = new google.maps.places.SearchBox(start);
     console.log("start search box looks like this: ", start);
@@ -207,7 +242,6 @@ function initMap() {
       directionsDisplay1: new gmaps.DirectionsRenderer({
         map: map,
         preserveViewport: true,
-        suppressMarkers: true,
         polylineOptions: {
           strokeColor: 'yellow'
         }
@@ -215,7 +249,6 @@ function initMap() {
       directionsDisplay2: new gmaps.DirectionsRenderer({
         map: map,
         preserveViewport: true,
-        suppressMarkers: true,
         polylineOptions: {
           strokeColor: 'blue'
         }
@@ -223,7 +256,6 @@ function initMap() {
       directionsDisplay3: new gmaps.DirectionsRenderer({
         map: map,
         preserveViewport: true,
-        suppressMarkers: true,
         polylineOptions: {
           strokeColor: 'yellow'
         },
