@@ -39,7 +39,7 @@ var destinationStation = {
 //turns origin and destination addresses into coordinates for Haversine formula
 var findLatLong = function(origin, destination) {
   $.ajax({
-    url: "https://maps.googleapis.com/maps/api/geocode/json?address=" + origin + "&bounds=40.667219,-74.030623|40.808685,-73.910987&key=" + apiKey,
+    url: "https://maps.googleapis.com/maps/api/geocode/json?address=" + origin + "&bounds=40.667219,-74.030623|40.808685,-73.910987&key=" + GEOENCODING_API_KEY,
     dataType: "json",
     success: function(data) {
       originCoords.lat = data["results"][0]["geometry"]["location"]["lat"];
@@ -48,7 +48,7 @@ var findLatLong = function(origin, destination) {
   })
 
   $.ajax({
-    url: "https://maps.googleapis.com/maps/api/geocode/json?address=" + destination + "&bounds=40.667219,-74.030623|40.808685,-73.910987&key=" + apiKey,
+    url: "https://maps.googleapis.com/maps/api/geocode/json?address=" + destination + "&bounds=40.667219,-74.030623|40.808685,-73.910987&key=" + GEOENCODING_API_KEY,
     callback: JSON,
     success: function(data) {
       destinationCoords.lat = data["results"][0]["geometry"]["location"]["lat"];
