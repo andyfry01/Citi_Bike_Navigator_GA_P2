@@ -11,14 +11,13 @@
 
   <div class="panel-col">
 
-    <div id="handlebars-container">
-    </div>
-    <span> Directions from your origin to the nearest Citibike pick-up station:</span>
+    <span id="directions-one"> Directions from your origin to the nearest Citibike pick-up station:</span>
     <div class="turnbyturn" id="one"></div>
-    <span> Directions to your Citibike drop-off station:</span>
+    <span id="directions-two"> Directions to your Citibike drop-off station:</span>
     <div class="turnbyturn" id="two"></div>
     <span> Directions to your destination from your Citibike drop-off station:</span>
     <div class="turnbyturn" id="three"></div>
+
   </div>
 
   <div class="map-col">
@@ -33,9 +32,12 @@
     <div id="map-canvas"></div>
   </div>
 
-  <script id="handlebarsTemplate" type="text/x-handlebars-template">
-    <span>The closest Citibike station to your departure point is: {{originName}}, it currently has {{numBikes}} bikes available.</span>
-    <span>The closest Citibike station to your destination is: {{destinationName}}, it currently has {{numSlots}} docking stations free.</span>
+  <script id="directions-template-one" type="text/x-handlebars-template">
+    <span>Your first Citibike station is: {{originName}}, {{numBikes}} bikes now available.</span>
+  </script>
+
+  <script id="directions-template-two" type="text/x-handlebars-template">
+    <span>Your second Citibike station is: {{destinationName}}, {{numSlots}} docking stations now available.</span>
   </script>
 
 

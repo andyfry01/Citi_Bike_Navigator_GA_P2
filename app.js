@@ -2,15 +2,11 @@ var start = document.getElementById("start");
 var end = document.getElementById("end");
 var submit = document.getElementById("submit");
 
-var handleBarsContainer = document.getElementById("handlebars-container")
-
-//handlebars source data
-var stationData = {
-  originName: undefined,
-  numBikes: undefined,
-  destinationName: undefined,
-  numSlots: undefined
-}
+submit.addEventListener("click", function() {
+  origin = start.value;
+  destination = end.value;
+  findLatLong(origin, destination);
+})
 
 //Variables used in locating Citibike stations
 var stationLat;
@@ -21,6 +17,7 @@ var originCoords = {
   lat: "",
   lng: ""
 }
+
 var destinationCoords = {
   lat: "",
   lng: ""
@@ -38,18 +35,6 @@ var destinationStation = {
   lng: undefined,
   fullCoords: undefined
 }
-
-var haversineResult = undefined;
-var shortestDistance = 10000;
-
-var shortestOriginDistance = 10000;
-var shortestDestinationDistance = 10000;
-
-submit.addEventListener("click", function() {
-  origin = start.value;
-  destination = end.value;
-  findLatLong(origin, destination);
-})
 
 //turns origin and destination addresses into coordinates for Haversine formula
 var findLatLong = function(origin, destination) {
@@ -154,7 +139,7 @@ var formatCitiCoords = function(coord) {
   }
 }
 
-//converts lat and lng to radians for Haversine formula
+//Converts lat and lng to radians for Haversine formula
 toRadians = function(num) {
   return num * Math.PI / 180;
 }
@@ -173,6 +158,8 @@ var haversine = function(lat1, lng1, lat2, lng2, location) {
     Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
   var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   var d = R * c;
+
+  // Returns different value depending on if we're looking for the origin or destination station
   if (location == "origin") {
     originHaversineResult = d;
   } else if (location == "destination") {
@@ -192,7 +179,7 @@ function initMap() {
     var startSearchBox = new google.maps.places.SearchBox(start);
     var endSearchBox = new google.maps.places.SearchBox(end);
 
-    // Bias the SearchBox results towards current map's viewport.
+    // Bias the searchbox autocomplete results to current map's viewport
     map.addListener('bounds_changed', function() {
       startSearchBox.setBounds(map.getBounds());
     });
@@ -268,16 +255,36 @@ function initMap() {
   });
 }
 
+// Handlebars template containers
+var directionsOne = document.getElementById("directions-one")
+var directionsTwo = document.getElementById("directions-two")
+
+//Handlebars source data
+var stationData = {
+  originName: undefined,
+  numBikes: undefined,
+  destinationName: undefined,
+  numSlots: undefined
+}
+
 //Fills handlebars template
 var fillHandlebars = function(object) {
-  handleBarsContainer.innerHTML = "";
-  var templateSource = document.getElementById('handlebarsTemplate').innerHTML;
-  var template = Handlebars.compile(templateSource);
-  var container = document.getElementById('handlebars-container');
-  var computedHtml = template(object);
-  var filledTemplate = document.createElement("span");
-  filledTemplate.innerHTML = computedHtml;
-  handleBarsContainer.appendChild(filledTemplate);
+  directionsOne.innerHTML = "";
+  directionsTwo.innerHTML = "";
+  var templateSourceOne = document.getElementById('directions-template-one').innerHTML;
+  var templateSourceTwo = document.getElementById('directions-template-two').innerHTML;
+  var templateOne = Handlebars.compile(templateSourceOne);
+  var templateTwo = Handlebars.compile(templateSourceTwo);
+  var containerOne = document.getElementById('directions-one');
+  var containerTwo = document.getElementById('directions-two');
+  var computedHtmlOne = templateOne(object);
+  var computedHtmlTwo = templateTwo(object);
+  var filledTemplateOne = document.createElement("span");
+  var filledTemplateTwo = document.createElement("span");
+  filledTemplateOne.innerHTML = computedHtmlOne;
+  filledTemplateTwo.innerHTML = computedHtmlTwo;
+  directionsOne.appendChild(filledTemplateOne);
+  directionsTwo.appendChild(filledTemplateTwo);
 }
 
 //Initializes map after all ajax requests are done.
