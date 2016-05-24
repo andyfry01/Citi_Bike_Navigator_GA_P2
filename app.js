@@ -41,7 +41,7 @@ var destinationStation = {
 
 var haversineResult = undefined;
 var shortestDistance = 10000;
-//refactor later with ln 37
+
 var shortestOriginDistance = 10000;
 var shortestDestinationDistance = 10000;
 
@@ -81,7 +81,6 @@ var findCitiBike = function() {
     dataType: "jsonp",
     jsonpCallback: 'callback',
   }).done(function(data) {
-    console.log(data)
     findClosestStation(data);
   });
 }
@@ -98,6 +97,7 @@ var findClosestStation = function(data) {
   shortestOriginDistance = 10000;
 
   //first for loop, finds "origin station"
+
   for (var i = 0; i < data.length; i++) {
     var citiLat = (data[i]["lat"]).toString()
     formatCitiCoords(citiLat);
@@ -115,7 +115,7 @@ var findClosestStation = function(data) {
       }
     }
   }
-  // console.log("the closest citibike dock to the origin point with available bikes is at coords: " + originStationLat + ", " + originStationLng)
+
   originStation.fullCoords = originStation.lat + ", " + originStation.lng;
   haversineResult = undefined;
   destinationStation.lat = undefined;
@@ -141,7 +141,6 @@ var findClosestStation = function(data) {
     }
   }
   fillHandlebars(stationData)
-  // console.log("the closest citibike dock to the destination point with available bikes is at coords: " + destinationStationLat + ", " + destinationStationLng)
   destinationStation.fullCoords = destinationStation.lat + ", " + destinationStation.lng
 };
 
@@ -162,7 +161,7 @@ toRadians = function(num) {
 }
 
 //Haversine Formula, determines distance between two sets of lat/lng points
-var haversine = function(lat1, lng1, lat2, lng2) {
+var haversine = function(lat1, lng1, lat2, lng2, location) {
   var R = 6371;
   var φ1 = toRadians(lat1);
   var φ2 = toRadians(lat2);
@@ -175,43 +174,24 @@ var haversine = function(lat1, lng1, lat2, lng2) {
     Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
   var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   var d = R * c;
-  haversineResult = d;
+  if (location == "origin") {
+    originHaversineResult = d;
+  } else if (location == "destination") {
+    destinationHaversineResult = d
+  }
 }
-var walking = 'https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png'
 
-var bicycle = "./img/bicycle.png"//Draws map on page after origin/destination information is filled in and stations have been located.
+//Draws map on page after origin/destination information is filled in and stations have been located.
 function initMap() {
   var gmaps = google.maps
   var map = new gmaps.Map(document.getElementById('map-canvas'), {
       center: new gmaps.LatLng(40.72, -73.97),
       zoom: 13
     })
-  // var walkingMarkerOne = new google.maps.Marker({
-  //   position: {origin},
-  //   map: map,
-  //   icon: './img/walking.png'
-  // });
-  // var walkingMarkerTwo = new google.maps.Marker({
-  //   position: {destination},
-  //   map: map,
-  //   icon: './img/walking.png'
-  // });
-  // var bicycleMarkerOne = new google.maps.Marker({
-  //   position: {lat: destinationStationLat, lng: destinationStationLng},
-  //   map: map,
-  //   icon: './img/bicycle.png'
-  // });
-  // var bicycleMarkerTwo = new google.maps.Marker({
-  //   position: {lat: 40.82, lng: -74.07},
-  //   map: map,
-  //   icon: './img/bicycle.png'
-  // });
-    // Create the search box and link it to the UI element.
-    var startSearchBox = new google.maps.places.SearchBox(start);
-    console.log("start search box looks like this: ", start);
 
+    // Search box
+    var startSearchBox = new google.maps.places.SearchBox(start);
     var endSearchBox = new google.maps.places.SearchBox(end);
-    console.log("end search box looks like this: ", end);
 
     // Bias the SearchBox results towards current map's viewport.
     map.addListener('bounds_changed', function() {
@@ -232,6 +212,7 @@ function initMap() {
       directionsDisplay2: new gmaps.DirectionsRenderer({
         map: map,
         preserveViewport: true,
+        suppressMarkers: true,
         polylineOptions: {
           strokeColor: 'blue'
         }
