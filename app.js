@@ -8,7 +8,7 @@ submit.addEventListener("click", function() {
   findLatLong(origin, destination);
 })
 
-//Variables used in locating Citibike stations
+//Variables used in locating Citi Bikebike stations
 var stationLat;
 var stationLng;
 
@@ -23,7 +23,7 @@ var destinationCoords = {
   lng: ""
 }
 
-//Coordinates for the origin and destination citibike stations
+//Coordinates for the origin and destination Citi Bike stations
 var originStation = {
   lat: undefined,
   lng: undefined,
@@ -59,7 +59,7 @@ var findLatLong = function(origin, destination) {
   })
 }
 
-//Queries Citibike data, calls findClosestStation
+//Queries Citi Bike data, calls findClosestStation
 var findCitiBike = function() {
   $.ajax({
     url: "http://api.citybik.es/citi-bike-nyc.json",
@@ -70,7 +70,7 @@ var findCitiBike = function() {
   });
 }
 
-//Loops through Citibike data, finds closest stations to origin and destination addresses
+//Loops through Citi Bike data, finds closest stations to origin and destination addresses
 var findClosestStation = function(data) {
 
   //Variables for storing distance between stations and origin/destination addresses
@@ -86,7 +86,7 @@ var findClosestStation = function(data) {
   shortestDestinationDistance = 10000;
 
   for (var i = 0; i < data.length; i++) {
-    //loops through Citibike station data and formats coordinates for Haversine formula
+    //loops through Citi Bike station data and formats coordinates for Haversine formula
     var citiLat = (data[i]["lat"]).toString()
     var citiLng = (data[i]["lng"]).toString()
     formatCitiCoords(citiLat);
@@ -128,7 +128,7 @@ var findClosestStation = function(data) {
   destinationHaversineResult = undefined;
 };
 
-//Formats citibike coordinate data so it can be passed into haversine formula
+//Formats Citi Bike coordinates so they can be passed into haversine formula
 var formatCitiCoords = function(coord) {
   if (coord[0] == "-") {
     var formattedCoord = [coord.slice(0, 3), ".", coord.slice(3)].join('');
