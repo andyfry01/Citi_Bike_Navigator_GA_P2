@@ -1,6 +1,8 @@
 # Citi Bike Navigation App
 ### An app combining Citi Bike station data and Google Maps.
 
+**Now live at [http://a-fry.io/citibike](http://a-fry.io/citibike)**
+
 **App summary:**
 The app takes live Citi Bike station data and combines it with Google Maps walking and cycling directions
 to create step-by-step directions for getting from your origin point to your destination via Citi Bike. After entering the addresses of where you're departing from and where you're traveling to, the app first queries the Citi Bike API to find the closest station to your origin point that currently has bikes available. It then provides walking instructions to that station, maps out cycling directions between that Citi Bike station and the station closest to your destination point that has docking stations free, and finally gives you walking directions from that Citi Bike station to your destination. In the left-hand column of the page, the step-by-step directions are listed out for each step of the process (walking - cycling - walking), and the addresses and current status of each Citi Bike station are also listed.
