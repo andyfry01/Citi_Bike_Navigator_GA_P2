@@ -63,7 +63,7 @@ var findLatLong = function(origin, destination) {
 //Queries Citi Bike data, calls findClosestStation
 var findCitiBike = function() {
   $.ajax({
-    url: "http://api.citybik.es/citi-bike-nyc.json",
+    url: "https://api.citybik.es/citi-bike-nyc.json",
     dataType: "jsonp",
     jsonpCallback: 'callback',
   }).done(function(data) {
