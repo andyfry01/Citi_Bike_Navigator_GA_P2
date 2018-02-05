@@ -287,6 +287,15 @@ var fillHandlebars = function(object) {
   directionsTwo.appendChild(filledTemplateTwo);
 }
 
+$(document).ready(function(){
+  console.log('window.adblockEnabled');
+  console.log(window.adblockEnabled);
+  
+  if (window.adblockEnabled) {
+    alert("Hello! Google Maps unfortunately doesn't work very well with ad blockers (uBlock, Adblock Plus, Ghostery, etc.) or similar browser extensions. Disable these extensions for this site and reload the page if you're having issues.");
+  }
+
+})
 //Initializes map after all ajax requests are done.
 $(document).ajaxStop(function() {
   initMap();
